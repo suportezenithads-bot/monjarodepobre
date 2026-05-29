@@ -1473,6 +1473,88 @@ function goToCheckout(){
   window.location.href = qs ? (base + qs) : base;
 }
 
+/* ===== SOM SENSORIAL — sino cristalino suave (Web Audio API) ===== */
+(function(){
+  var audioCtx=null, muted=false;
+
+  // Restaura preferência de mudo da sessão (não usa localStorage por compatibilidade)
+  function ensureCtx(){
+    if(!audioCtx){
+      try{ audioCtx = new (window.AudioContext||window.webkitAudioContext)(); }
+      catch(e){ return null; }
+    }
+    if(audioCtx.state==='suspended'){ audioCtx.resume(); }
+    return audioCtx;
+  }
+
+  // Toca um sino cristalino curto e suave
+  function chime(){
+    if(muted) return;
+    var ctx=ensureCtx();
+    if(!ctx) return;
+    var now=ctx.currentTime;
+
+    // Ganho mestre — volume baixo e confortável
+    var master=ctx.createGain();
+    master.gain.setValueAtTime(0.0001, now);
+    master.gain.exponentialRampToValueAtTime(0.13, now+0.012); // ataque rápido e macio
+    master.gain.exponentialRampToValueAtTime(0.0001, now+0.9); // decaimento longo tipo sino
+    master.connect(ctx.destination);
+
+    // Frequências em intervalo agradável (C6 + G6) = sensação cristalina/premium
+    var freqs=[1046.50, 1567.98];
+    freqs.forEach(function(f,i){
+      var osc=ctx.createOscillator();
+      osc.type='sine';
+      osc.frequency.setValueAtTime(f, now);
+      // leve detune dá "brilho"/shimmer
+      osc.detune.setValueAtTime(i===0?0:4, now);
+
+      var g=ctx.createGain();
+      g.gain.setValueAtTime(i===0?1:0.5, now); // harmônico superior mais baixo
+      osc.connect(g); g.connect(master);
+      osc.start(now);
+      osc.stop(now+0.95);
+    });
+  }
+  window.__chime = chime;
+
+  // Dispara em toda interação relevante (opções + botões de avançar)
+  var SELECTOR='.opt, .btn, .g-card, .age-card, .body-card';
+  document.addEventListener('click', function(e){
+    var t=e.target.closest && e.target.closest(SELECTOR);
+    if(t){ chime(); }
+  }, true);
+
+  // ===== Ícone discreto de som/mudo =====
+  function buildToggle(){
+    var b=document.createElement('button');
+    b.id='sndToggle';
+    b.setAttribute('aria-label','Ativar ou desativar som');
+    b.style.cssText=[
+      'position:fixed','bottom:16px','right:16px','z-index:9999',
+      'width:42px','height:42px','border-radius:50%','border:none',
+      'background:rgba(26,122,56,.92)','color:#fff','cursor:pointer',
+      'box-shadow:0 4px 14px rgba(0,0,0,.18)','font-size:18px','line-height:42px',
+      'padding:0','display:flex','align-items:center','justify-content:center',
+      'transition:transform .15s, background .2s','-webkit-tap-highlight-color:transparent'
+    ].join(';');
+    b.innerHTML='🔊';
+    b.onmousedown=function(){ b.style.transform='scale(.9)'; };
+    b.onmouseup=function(){ b.style.transform='scale(1)'; };
+    b.onclick=function(ev){
+      ev.stopPropagation();
+      muted=!muted;
+      b.innerHTML=muted?'🔇':'🔊';
+      b.style.background=muted?'rgba(120,120,120,.85)':'rgba(26,122,56,.92)';
+      if(!muted){ chime(); } // feedback ao reativar
+    };
+    document.body.appendChild(b);
+  }
+  if(document.readyState!=='loading'){ buildToggle(); }
+  else { document.addEventListener('DOMContentLoaded', buildToggle); }
+})();
+
 </script>
 </body>
 </html>
