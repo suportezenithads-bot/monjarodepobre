@@ -4,6 +4,44 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
 <title>Munjaro de Pobre — Diagnóstico Personalizado</title>
+
+<!-- Meta Pixel -->
+<script>
+  !function(f,b,e,v,n,t,s)
+  {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+  n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+  if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+  n.queue=[];t=b.createElement(e);t.async=!0;
+  t.src=v;s=b.getElementsByTagName(e)[0];
+  s.parentNode.insertBefore(t,s)}(window, document,'script',
+  'https://connect.facebook.net/en_US/fbevents.js');
+  fbq('init', '1701639864377176');
+  fbq('track', 'PageView');
+</script>
+<noscript><img height="1" width="1" style="display:none"
+  src="https://www.facebook.com/tr?id=1701639864377176&ev=PageView&noscript=1"/></noscript>
+<!-- End Meta Pixel -->
+
+<!-- UTMify - captura de UTMs -->
+<script
+  src="https://cdn.utmify.com.br/scripts/utms/latest.js"
+  data-utmify-prevent-xcod-sck
+  data-utmify-prevent-subids
+  async
+  defer
+></script>
+
+<!-- UTMify - pixel -->
+<script>
+  window.pixelId = "6a19e813ee87b06418e5729a";
+  var a = document.createElement("script");
+  a.setAttribute("async", "");
+  a.setAttribute("defer", "");
+  a.setAttribute("src", "https://cdn.utmify.com.br/scripts/pixel/pixel.js");
+  document.head.appendChild(a);
+</script>
+<!-- End UTMify -->
+
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,700&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <style>
 
@@ -1186,7 +1224,7 @@ input[type=number]::-webkit-outer-spin-button,input[type=number]::-webkit-inner-
   </div>
 
   <!-- BIG CTA -->
-  <button class="btn" style="font-size:18px;padding:20px" onclick="alert('Redirecionando para o checkout...')">
+  <button class="btn" style="font-size:18px;padding:20px" onclick="goToCheckout()">
     Quero Começar Hoje! 🤩
     <span class="btn-s">Garantir minha vaga agora</span>
   </button>
@@ -1427,6 +1465,13 @@ function buildResult(){
 }
 
 document.body.dataset.gender='f';
+
+// Redireciona para o checkout Kirvano preservando parâmetros de rastreamento (UTMs) para a UTMify
+function goToCheckout(){
+  var base="https://pay.kirvano.com/2c40e944-62ad-4ffb-9b0f-df9c472d9380";
+  var qs=window.location.search;
+  window.location.href = qs ? (base + qs) : base;
+}
 
 </script>
 </body>
